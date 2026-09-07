@@ -34,3 +34,6 @@ Thumbs.db
 
 # mcp
 .mcp.json
+
+# parquet file for reviews
+review_embeddings.parquet
