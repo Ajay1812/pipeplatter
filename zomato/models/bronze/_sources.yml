@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: landing
+    description: "Landing Schema"
+
+    tables:
+      - name: food
+        description: "Food table"
+      - name: menu
+        description: "Menu table"
+      - name: order_items
+        description: "Order Items table"
+      - name: orders
+        description: "Orders table"
+      - name: restaurants
+        description: "Restaurants table"
+      - name: reviews
+        description: "Review table"
+      - name: users
+        description: "Users table"

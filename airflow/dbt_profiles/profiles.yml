@@ -1,0 +1,11 @@
+zomato:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: databricks
+      catalog: "{{ env_var('DATABRICKS_CATALOG', 'zomato') }}"
+      schema: "{{ env_var('DATABRICKS_SCHEMA', 'landing') }}"
+      host: "{{ env_var('DATABRICKS_HOST') }}"
+      http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"
+      token: "{{ env_var('DATABRICKS_TOKEN') }}"
+      threads: "{{ env_var('DBT_THREADS', '4') | as_number }}"
