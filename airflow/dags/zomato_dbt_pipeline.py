@@ -5,6 +5,7 @@ from airflow.providers.standard.operators.bash import BashOperator
 from airflow.sdk import DAG
 
 DBT_BIN = "/opt/airflow/dbt_venv/bin/dbt"
+AI_PYTHON = "/opt/airflow/ai_venv/bin/python"
 DBT_PROJECT_DIR = "{{ var.value.get('dbt_project_dir', '/opt/airflow/dbt/zomato') }}"
 DBT_FLAGS = f"--project-dir {DBT_PROJECT_DIR} --profiles-dir /opt/airflow/dbt_profiles"
 
@@ -60,4 +61,14 @@ with DAG(
         bash_command=f"{DBT_BIN} test {DBT_FLAGS}",
     )
 
-    dbt_deps >> dbt_bronze >> dbt_silver >> dbt_gold >> dbt_test
+    enrich_reviews_ai = BashOperator(
+        task_id="enrich_reviews",
+        bash_command=f"{AI_PYTHON} /opt/airflow/ai/enrich_reviews.py",
+    )
+
+    dbt_build_ai = BashOperator(
+        task_id="dbt_build_ai",
+        bash_command=f"{DBT_BIN} build --select tag:ai {DBT_FLAGS}",
+    )
+
+    dbt_deps >> dbt_bronze >> dbt_silver >> dbt_gold >> dbt_test >> enrich_reviews_ai >> dbt_build_ai

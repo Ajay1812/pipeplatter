@@ -28,12 +28,16 @@ x-airflow-common: &airflow-common
     DBT_PROJECT_DIR: /opt/airflow/dbt/zomato
     # lets DatabricksSqlOperator / DatabricksSubmitRunOperator etc. work out of the box:
     AIRFLOW_CONN_DATABRICKS_DEFAULT: '{"conn_type":"databricks","host":"${DATABRICKS_HOST}","password":"${DATABRICKS_TOKEN}","extra":{"http_path":"${DATABRICKS_HTTP_PATH}"}}'
+    # ai/connections.py + ai/enrich_reviews.py need these:
+    GROQ_API_KEY: ${GROQ_API_KEY}
+    GROQ_MODEL_NAME: ${GROQ_MODEL_NAME}
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./dbt_profiles:/opt/airflow/dbt_profiles     # profiles.yml (templated, no secrets committed)
     - ../zomato:/opt/airflow/dbt/zomato             # your dbt project
     - ./include:/opt/airflow/include                # landing COPY INTO sql
+    - ../ai:/opt/airflow/ai                         # enrich_reviews.py + shared ai/ package
   depends_on:
     postgres:
       condition: service_healthy

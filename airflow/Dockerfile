@@ -15,3 +15,11 @@ RUN uv pip install --python "$(which python)" --no-cache-dir \
 # dbt in its own venv so it never clashes with Airflow's deps. DAGs call /opt/airflow/dbt_venv/bin/dbt
 RUN uv venv /opt/airflow/dbt_venv && \
     uv pip install --python /opt/airflow/dbt_venv/bin/python --no-cache-dir "dbt-databricks>=1.12.5"
+
+# ai/enrich_reviews.py's deps, same isolation reasoning as dbt above.
+# DAGs call /opt/airflow/ai_venv/bin/python /opt/airflow/ai/enrich_reviews.py
+RUN uv venv /opt/airflow/ai_venv && \
+    uv pip install --python /opt/airflow/ai_venv/bin/python --no-cache-dir \
+      python-dotenv \
+      langchain-groq \
+      databricks-sql-connector
