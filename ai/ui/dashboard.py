@@ -34,7 +34,7 @@ def run_query(sql: str) -> pd.DataFrame:
 
 CATALOG = os.environ['DATABRICKS_CATALOG']
 
-st.title("Zomato Dashboard")
+st.title("Pipeplatter Dashboard")
 
 tab_revenue, tab_restaurants, tab_sla, tab_cuisine = st.tabs(
     ["Revenue & Orders", "Top Restaurants", "Delivery SLA", "Cuisine Trends"]

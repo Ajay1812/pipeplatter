@@ -74,7 +74,7 @@ def ask_llm(question: str, top_reviews: pd.DataFrame) -> str:
     response = model.invoke(prompt)
     return response.content
 
-st.title("Chat with your Zomato Reviews")
+st.title("Chat with your Pipeplatter Reviews")
 st.caption(f"Searching {NEW_REVIEWS} review, answering with {os.environ['GROQ_MODEL_NAME']} model")
 
 review_df = load_reviews()

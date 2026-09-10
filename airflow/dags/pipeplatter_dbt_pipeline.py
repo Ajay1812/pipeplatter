@@ -6,23 +6,23 @@ from airflow.sdk import DAG
 
 DBT_BIN = "/opt/airflow/dbt_venv/bin/dbt"
 AI_PYTHON = "/opt/airflow/ai_venv/bin/python"
-DBT_PROJECT_DIR = "{{ var.value.get('dbt_project_dir', '/opt/airflow/dbt/zomato') }}"
+DBT_PROJECT_DIR = "{{ var.value.get('dbt_project_dir', '/opt/airflow/dbt/pipeplatter') }}"
 DBT_FLAGS = f"--project-dir {DBT_PROJECT_DIR} --profiles-dir /opt/airflow/dbt_profiles"
 
 LANDING_TABLES = ["food", "users", "menu", "orders", "order_items", "reviews", "restaurants"]
 
 with DAG(
-    dag_id="zomato_dbt_pipeline",
-    description="Run the zomato dbt project (bronze -> silver -> gold) on Databricks",
+    dag_id="pipeplatter_dbt_pipeline",
+    description="Run the pipeplatter dbt project (bronze -> silver -> gold) on Databricks",
     start_date=datetime(2026, 1, 1),
     schedule='@daily',
     catchup=False,
-    tags=["dbt", "databricks", "zomato"],
+    tags=["dbt", "databricks", "pipeplatter"],
     doc_md=__doc__,
     template_searchpath=["/opt/airflow/include/sql"],
 ) as dag:
 
-    # Step 1: land the raw S3 CSVs into zomato.landing.* via COPY INTO.
+    # Step 1: land the raw S3 CSVs into pipeplatter.landing.* via COPY INTO.
     # COPY INTO tracks which source files it already loaded, so re-running a task
     # only ingests new files - safe to retry.
     landing_tasks = [

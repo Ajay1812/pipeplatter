@@ -1,6 +1,6 @@
-# Zomato Data Engineering Pipeline
+# Pipeplatter Data Engineering Pipeline
 
-An end-to-end data pipeline for Zomato order/restaurant/review data:
+An end-to-end data pipeline for Pipeplatter order/restaurant/review data:
 raw CSVs on S3 → Databricks (Unity Catalog) landing tables → dbt medallion
 transformations (bronze/silver/gold) → orchestrated by Airflow, with an AI review-enrichment
 step and a Streamlit app (chat + dashboard) on top.
@@ -9,19 +9,19 @@ step and a Streamlit app (chat + dashboard) on top.
 S3 (raw CSVs)
    │  COPY INTO
    ▼
-zomato.landing.*          (Databricks tables, ingested by Airflow)
+pipeplatter.landing.*          (Databricks tables, ingested by Airflow)
    │  dbt: bronze
    ▼
-zomato.bronze.*           (views — 1:1 with landing sources)
+pipeplatter.bronze.*           (views — 1:1 with landing sources)
    │  dbt: silver
    ▼
-zomato.silver.*           (views — typed, cleaned, deduped)
+pipeplatter.silver.*           (views — typed, cleaned, deduped)
    │  dbt: gold
    ▼
-zomato.gold.*              (tables — dims, facts, marts)
+pipeplatter.gold.*              (tables — dims, facts, marts)
    │  ai/enrich_reviews.py (Groq LLM sentiment/topic classification)
    ▼
-zomato.ai.review_enriched  →  dbt: mart_review_insights
+pipeplatter.ai.review_enriched  →  dbt: mart_review_insights
 ```
 
 ## Demo
@@ -34,7 +34,7 @@ zomato.ai.review_enriched  →  dbt: mart_review_insights
 
 ```
 .
-├── zomato/                  # dbt project
+├── pipeplatter/                  # dbt project
 │   ├── models/
 │   │   ├── bronze/          # 1:1 views over landing sources
 │   │   ├── silver/          # typed/cleaned views
@@ -45,7 +45,7 @@ zomato.ai.review_enriched  →  dbt: mart_review_insights
 ├── ai/                      # LLM-powered scripts (Groq) + Streamlit app
 │   ├── config.py            # system prompts, embedding model, table schema for text-to-SQL
 │   ├── connections.py       # cached Databricks SQL + Groq model connections
-│   ├── enrich_reviews.py    # batch job: classifies review sentiment/topic, writes to zomato.ai.review_enriched
+│   ├── enrich_reviews.py    # batch job: classifies review sentiment/topic, writes to pipeplatter.ai.review_enriched
 │   └── ui/                  # Streamlit multipage app
 │       ├── app.py           # entrypoint - `streamlit run ai/ui/app.py`
 │       ├── dashboard.py     # revenue, top restaurants, delivery SLA, cuisine trends (Plotly)
@@ -55,7 +55,7 @@ zomato.ai.review_enriched  →  dbt: mart_review_insights
     ├── Dockerfile
     ├── docker-compose.yml
     ├── dags/
-    │   └── zomato_dbt_pipeline.py
+    │   └── pipeplatter_dbt_pipeline.py
     ├── dbt_profiles/
     │   └── profiles.yml     # templated, reads Databricks creds from env
     ├── include/sql/landing/ # COPY INTO statements, one per source table
@@ -64,27 +64,27 @@ zomato.ai.review_enriched  →  dbt: mart_review_insights
 
 ## Data model
 
-**Sources** (`zomato.landing`, loaded from S3 via `COPY INTO`): `food`, `users`, `menu`,
+**Sources** (`pipeplatter.landing`, loaded from S3 via `COPY INTO`): `food`, `users`, `menu`,
 `orders`, `order_items`, `reviews`, `restaurants`.
 
-**Bronze** (`zomato.bronze`, views) — `br_*`: a thin `select *` passthrough over each
+**Bronze** (`pipeplatter.bronze`, views) — `br_*`: a thin `select *` passthrough over each
 landing source, giving every downstream layer a stable dbt `ref()` instead of depending
 on raw source tables directly.
 
-**Silver** (`zomato.silver`, views) — `sl_*`: type casting (with `try_cast` so malformed
+**Silver** (`pipeplatter.silver`, views) — `sl_*`: type casting (with `try_cast` so malformed
 source rows become `NULL` instead of failing the whole model), column renames, and basic
 cleaning/filtering.
 
-**Gold** (`zomato.gold`, tables):
+**Gold** (`pipeplatter.gold`, tables):
 - Dimensions: `dim_customers`, `dim_restaurants`, `dim_food`, `dim_dates`
 - Facts: `fct_orders`, `fct_order_items` (incremental)
 - Marts: `mart_daily_city_revenue`, `mart_delivery_sla`, `mart_restaurant_performance`,
   `mart_cuisine_trends`
-- `mart_review_insights` (tagged `ai`) — joins `sl_reviews` against `zomato.ai.review_enriched`
+- `mart_review_insights` (tagged `ai`) — joins `sl_reviews` against `pipeplatter.ai.review_enriched`
   (written by `ai/enrich_reviews.py`) to aggregate sentiment/topic by city.
 
-Schema placement for every layer is controlled centrally in `zomato/dbt_project.yml`
-(`+schema: bronze|silver|gold`), and `zomato/macros/generate_schema_name.sql` overrides
+Schema placement for every layer is controlled centrally in `pipeplatter/dbt_project.yml`
+(`+schema: bronze|silver|gold`), and `pipeplatter/macros/generate_schema_name.sql` overrides
 dbt's default `<target_schema>_<custom_schema>` naming so models land in exactly
 `bronze`/`silver`/`gold` rather than e.g. `landing_bronze`.
 
@@ -105,19 +105,19 @@ dbt's default `<target_schema>_<custom_schema>` naming so models land in exactly
 
 1. Create `~/.dbt/profiles.yml`:
    ```yaml
-   zomato:
+   pipeplatter:
      target: dev
      outputs:
        dev:
          type: databricks
-         catalog: zomato
+         catalog: pipeplatter
          schema: landing
          host: <your-workspace-host>
          http_path: /sql/1.0/warehouses/<warehouse-id>
          token: <your-databricks-token>
          threads: 4
    ```
-2. From `zomato/`:
+2. From `pipeplatter/`:
    ```bash
    uv run dbt run     # or: dbt build, dbt run -s bronze/silver/gold, dbt test
    ```
@@ -154,11 +154,11 @@ docker compose up -d
 
 Airflow UI: http://localhost:8080 (`admin` / `admin`)
 
-Trigger the `zomato_dbt_pipeline` DAG. It runs, in order:
+Trigger the `pipeplatter_dbt_pipeline` DAG. It runs, in order:
 
 1. `copy_into_food`, `copy_into_users`, `copy_into_menu`, `copy_into_orders`,
    `copy_into_order_items`, `copy_into_reviews`, `copy_into_restaurants` — in parallel,
-   each landing one S3 CSV into `zomato.landing.*` via `COPY INTO`
+   each landing one S3 CSV into `pipeplatter.landing.*` via `COPY INTO`
    (`airflow/include/sql/landing/*.sql`). Idempotent — `COPY INTO` tracks which files
    it already loaded and skips them on retry.
 2. `dbt_deps`
@@ -166,7 +166,7 @@ Trigger the `zomato_dbt_pipeline` DAG. It runs, in order:
 4. `dbt_test`
 5. `enrich_reviews` — runs `ai/enrich_reviews.py`, which classifies a sample of
    un-enriched reviews (sentiment, topic, key issue) via Groq and writes them to
-   `zomato.ai.review_enriched`.
+   `pipeplatter.ai.review_enriched`.
 6. `dbt_build_ai` — `dbt build --select tag:ai`, which builds `mart_review_insights` on
    top of the freshly enriched reviews.
 

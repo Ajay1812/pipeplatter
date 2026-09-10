@@ -1,4 +1,4 @@
-COPY INTO zomato.landing.reviews
+COPY INTO pipeplatter.landing.reviews
 FROM (
   SELECT CAST(review_id AS DECIMAL(10,0)) AS review_id,
          CAST(order_id AS DECIMAL(10,0)) AS order_id,

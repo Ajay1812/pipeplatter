@@ -1,4 +1,4 @@
-COPY INTO zomato.landing.order_items
+COPY INTO pipeplatter.landing.order_items
 FROM (
   SELECT CAST(order_item_id AS DECIMAL(10,0)) AS order_item_id,
          CAST(order_id AS DECIMAL(10,0)) AS order_id,

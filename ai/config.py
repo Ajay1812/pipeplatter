@@ -44,7 +44,7 @@ EXAMPLE_QUESTIONS = [
 ]
 
 TABLE_SCHEMA = """
-Tables available (Databricks). Use bare table names, schema prefix ZOMATO.GOLD.
+Tables available (Databricks). Use bare table names, schema prefix PIPEPLATTER.GOLD.
 FCT_ORDERS(order_id, order_date, customer_id, restaurant_id, city, cuisine,
             payment_method, order_status, is_delivered BOOLEAN, sales_amount, discount,
             delivery_fee, gst, customer_rating, delivery_time_min)
@@ -63,7 +63,7 @@ DATABRICKS_SYSTEM_PROMPT = f"""
 You are a Databricks SQL expert. Write ONE SELECT query that answers the question.
 Rules:
 - SELECT queries only, never modify data.
-- Use table names (ZOMATO.GOLD.FCT_ORDERS) .
+- Use table names (PIPEPLATTER.GOLD.FCT_ORDERS) .
 - Add a LIMIT of 100 or less, unless the question asks for a single total.
 - Databricks SQL is strictly typed with no implicit BOOLEAN/INT coercion. BOOLEAN columns
   (e.g. is_delivered) must be compared with TRUE/FALSE, or referenced directly/negated

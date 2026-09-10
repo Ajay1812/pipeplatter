@@ -44,7 +44,7 @@ def run_query(sql):
 def convert_for_download(df):
     return df.to_csv(index=False).encode("utf-8")
 
-st.title("Chat with your Zomato Data")
+st.title("Chat with your Pipeplatter Data")
 st.caption(f"Ask in English, {os.environ['GROQ_MODEL_NAME']} write the SQL, Databricks run it.")
 
 question = st.text_input("Enter your question here",

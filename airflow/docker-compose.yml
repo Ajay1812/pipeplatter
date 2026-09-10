@@ -20,12 +20,12 @@ x-airflow-common: &airflow-common
     DATABRICKS_HOST: ${DATABRICKS_HOST}
     DATABRICKS_HTTP_PATH: ${DATABRICKS_HTTP_PATH}
     DATABRICKS_TOKEN: ${DATABRICKS_TOKEN}
-    DATABRICKS_CATALOG: ${DATABRICKS_CATALOG:-zomato}
+    DATABRICKS_CATALOG: ${DATABRICKS_CATALOG:-pipeplatter}
     DATABRICKS_SCHEMA: ${DATABRICKS_SCHEMA:-landing}
     # exposed to DAGs as the Airflow Variable `s3_bucket` (used by the landing COPY INTO sql):
     AIRFLOW_VAR_S3_BUCKET: ${S3_BUCKET}
     DBT_PROFILES_DIR: /opt/airflow/dbt_profiles
-    DBT_PROJECT_DIR: /opt/airflow/dbt/zomato
+    DBT_PROJECT_DIR: /opt/airflow/dbt/pipeplatter
     # lets DatabricksSqlOperator / DatabricksSubmitRunOperator etc. work out of the box:
     AIRFLOW_CONN_DATABRICKS_DEFAULT: '{"conn_type":"databricks","host":"${DATABRICKS_HOST}","password":"${DATABRICKS_TOKEN}","extra":{"http_path":"${DATABRICKS_HTTP_PATH}"}}'
     # ai/connections.py + ai/enrich_reviews.py need these:
@@ -35,7 +35,7 @@ x-airflow-common: &airflow-common
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./dbt_profiles:/opt/airflow/dbt_profiles     # profiles.yml (templated, no secrets committed)
-    - ../zomato:/opt/airflow/dbt/zomato             # your dbt project
+    - ../pipeplatter:/opt/airflow/dbt/pipeplatter             # your dbt project
     - ./include:/opt/airflow/include                # landing COPY INTO sql
     - ../ai:/opt/airflow/ai                         # enrich_reviews.py + shared ai/ package
   depends_on:

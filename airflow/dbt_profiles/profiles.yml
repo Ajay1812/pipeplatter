@@ -1,9 +1,9 @@
-zomato:
+pipeplatter:
   target: "{{ env_var('DBT_TARGET', 'dev') }}"
   outputs:
     dev:
       type: databricks
-      catalog: "{{ env_var('DATABRICKS_CATALOG', 'zomato') }}"
+      catalog: "{{ env_var('DATABRICKS_CATALOG', 'pipeplatter') }}"
       schema: "{{ env_var('DATABRICKS_SCHEMA', 'landing') }}"
       host: "{{ env_var('DATABRICKS_HOST') }}"
       http_path: "{{ env_var('DATABRICKS_HTTP_PATH') }}"

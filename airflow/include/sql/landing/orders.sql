@@ -1,4 +1,4 @@
-COPY INTO zomato.landing.orders
+COPY INTO pipeplatter.landing.orders
 FROM (
   SELECT CAST(order_id AS DECIMAL(10,0)) AS order_id,
          CAST(order_timestamp AS TIMESTAMP_NTZ) AS order_timestamp,

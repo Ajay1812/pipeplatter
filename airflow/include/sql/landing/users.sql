@@ -1,4 +1,4 @@
-COPY INTO zomato.landing.users
+COPY INTO pipeplatter.landing.users
 FROM (
   SELECT CAST(user_id AS STRING) AS user_id, name, email, password,
          CAST(`Age` AS STRING) AS age, `Gender` AS gender, `Marital Status` AS marital_status,
