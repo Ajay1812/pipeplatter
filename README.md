@@ -5,24 +5,7 @@ raw CSVs on S3 → Databricks (Unity Catalog) landing tables → dbt medallion
 transformations (bronze/silver/gold) → orchestrated by Airflow, with an AI review-enrichment
 step and a Streamlit app (chat + dashboard) on top.
 
-```
-S3 (raw CSVs)
-   │  COPY INTO
-   ▼
-pipeplatter.landing.*          (Databricks tables, ingested by Airflow)
-   │  dbt: bronze
-   ▼
-pipeplatter.bronze.*           (views — 1:1 with landing sources)
-   │  dbt: silver
-   ▼
-pipeplatter.silver.*           (views — typed, cleaned, deduped)
-   │  dbt: gold
-   ▼
-pipeplatter.gold.*              (tables — dims, facts, marts)
-   │  ai/enrich_reviews.py (Groq LLM sentiment/topic classification)
-   ▼
-pipeplatter.ai.review_enriched  →  dbt: mart_review_insights
-```
+![Architecture diagram](demo/Pipeplatter_architecture_diagram.png)
 
 ## Demo
 
