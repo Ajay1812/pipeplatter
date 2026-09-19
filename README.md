@@ -9,9 +9,9 @@ step and a Streamlit app (chat + dashboard) on top.
 
 ## Demo
 
-| Airflow DAG run | Dashboard | SQL Chat |
-|---|---|---|
-| ![Airflow DAG run](demo/airflow-dag-run.png) | ![Dashboard](demo/dashboard.png) | ![SQL Chat](demo/sql-chat.png) |
+https://github.com/user-attachments/assets/c334df93-c879-44ff-bd59-ea69de88f0fd
+
+[▶️ Watch the video](https://www.youtube.com/watch?v=_qPj_G656d8&t=3s)
 
 ## Repo layout
 
