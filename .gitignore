@@ -38,3 +38,5 @@ Thumbs.db
 # parquet file for reviews
 review_embeddings.parquet
 score.parquet
+
+brag-output

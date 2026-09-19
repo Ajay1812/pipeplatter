@@ -53,7 +53,7 @@ with DAG(
 
     dbt_gold = BashOperator(
         task_id="dbt_run_gold",
-        bash_command=f"{DBT_BIN} run -s gold {DBT_FLAGS}",
+        bash_command=f"{DBT_BIN} run -s gold --exclude tag:ai {DBT_FLAGS}",
     )
 
     dbt_test = BashOperator(

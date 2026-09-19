@@ -6,7 +6,7 @@ from connections import get_databricks_connection, get_model_connection
 from config import ENRICH_SYSTEM_PROMPT
 load_dotenv('airflow/.env')
 
-SAMPLE_N = 1000
+SAMPLE_N = 10
 
 def create_output_table(cursor):
     cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {os.environ['DATABRICKS_CATALOG']}.AI")
